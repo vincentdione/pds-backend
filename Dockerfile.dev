@@ -1,0 +1,33 @@
+#FROM node:14
+
+#ENV  NODE_ENV = dev
+
+#WORKDIR  /usr/src/api
+#COPY package.json .
+#COPY package-lock.json .
+#RUN npm install
+#COPY . .
+
+#CMD ["sh","-c","npm start"]
+
+
+FROM node:14-alpine as DEV 
+ENV  NODE_ENV = dev
+
+WORKDIR /app
+COPY ./package.json ./
+RUN npm i
+COPY . .
+CMD ["npm", "run", "start"]
+
+#FROM node:16.15-alpine3.14
+#RUN mkdir -p /opt/app
+#WORKDIR /opt/app
+#RUN adduser -S ousmanevincent
+#COPY . .
+#RUN npm install
+#RUN npm install --save pm2
+#RUN chown -R ousmanevincent /opt/app
+#USER ousmanevincent
+#EXPOSE 5000
+#CMD [ "npm", "run", "start" ]
