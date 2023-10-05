@@ -40,10 +40,15 @@ db.role = require("../models/role.model.js")(sequelize, Sequelize);
 
 db.user_roles = require("../models/user_roles.model.js")(sequelize, Sequelize);
 
-db.patient = require("../models/patient.model.js")(sequelize, Sequelize);
-db.hopital = require("../models/hopital.model.js")(sequelize, Sequelize);
-db.radio = require("../models/radio.model.js")(sequelize, Sequelize);
+db.cadres = require("../models/cadres.model.js")(sequelize, Sequelize);
 
+
+db.pays = require("../models/pays.model.js")(sequelize,Sequelize);
+db.regions = require("../models/regions.model.js")(sequelize,Sequelize);
+db.departements = require("../models/departements.model.js")(sequelize,Sequelize);
+db.communes = require("../models/communes.model.js")(sequelize,Sequelize);
+db.lieuvote = require("../models/lieuvote.model.js")(sequelize,Sequelize);
+db.bureauvote = require("../models/bureauvote.model.js")(sequelize,Sequelize);
 
 
 
@@ -60,38 +65,23 @@ db.user.belongsToMany(db.role, {
   otherKey: "roleId"
 });
 
-
-/* db.user.belongsTo(db.radio, {
-  foreignKey: "userId",
-  as: "user",
-});
- */
-db.radio.belongsTo(db.user, {as: 'secretaire'});
-db.radio.belongsTo(db.user, {as: 'docteur'});
-db.radio.belongsTo(db.patient);
-db.radio.belongsTo(db.hopital);
-
-/* include: [{
-  model: db.employee,
-  as: 'SupervisorId
-}]
- */
+db.cadres.belongsTo(db.user);
 
 
+db.pays.hasMany(db.regions);
+db.regions.belongsTo(db.pays);
 
+db.regions.hasMany(db.departements);
+db.departements.belongsTo(db.regions);
 
+db.departements.hasMany(db.communes);
+db.communes.belongsTo(db.departements);
 
+db.communes.hasMany(db.lieuvote);
+db.lieuvote.belongsTo(db.communes);
 
-db.ROLES = ["docteur", "secretaire","admin"];
-
-
-
-
-
-
-
-
-
+db.communes.hasMany(db.bureauvote);
+db.bureauvote.belongsTo(db.communes);
 
 
 module.exports = db;

@@ -3,21 +3,6 @@ const { updateOne, getOne, removeOne, getUsers,addOne, getRoles, blockOne, unBlo
 const { verifyToken,verifyUser,isAdmin } = require("../middleware/authJwt");
 
 
-/* 
-router.get("/checkauthentication", verifyToken,async (req,res,next) => {  
-    res.send("Hello you are logged in")
-});
-
-
-router.get("/checkuser/:id", verifyUser,async (req,res,next) => {  
-    res.send("Hello you are logged in and you can delete")
-});
-
-router.get("/checkadmin/:id", isAdmin, (req,res,next)=>{
-   res.send("hello admin, you are logged in and you can delete all accounts")
-})
- */
-
 
 router.post("/add",async (req, res) => {    
     await addOne(req.body, res);

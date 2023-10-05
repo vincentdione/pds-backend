@@ -2,16 +2,18 @@ const router = require("express").Router();
 
 const authRoutes = require("./auth.routes");
 const userRoutes = require("./user.routes");
-const patientRoutes = require("./patient.routes");
-const hopitalRoutes = require("./hopital.routes");
-const radioRoutes = require("./radio.routes");
+const cadreRoutes = require("./cadres.routes");
+const regionRoutes = require("./regions.routes");
+const departementRoutes = require("./departements.routes");
+const communeRoutes = require("./communes.routes");
 
 
 router.use("/api/auth", authRoutes);
 router.use("/api/users", userRoutes);
-router.use("/api/patients", patientRoutes);
-router.use("/api/hopital", hopitalRoutes);
-router.use("/api/radios", radioRoutes);
+router.use("/api/cadres", cadreRoutes);
+router.use("/api/regions", regionRoutes);
+router.use("/api/departements", departementRoutes);
+router.use("/api/communes", communeRoutes);
 
 
 

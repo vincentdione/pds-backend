@@ -1,29 +1,27 @@
 module.exports = (sequelize, Sequelize) => {
-  const Hopital = sequelize.define("hopital", {
+  const Communes = sequelize.define("communes", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true
     },
-    hop_name: {
+    com_name: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true
     },
-    hop_adresse: {
+    com_description: {
       type: Sequelize.STRING,
       allowNull: true,
     },
-    hop_numeroContact: {
-      type: Sequelize.STRING,
-      allowNull: true,
+    com_nombreElecteurs: {
+      type: Sequelize.INTEGER,
     },
-    hop_prix: {
-      type: Sequelize.STRING,
-      allowNull: true,
-    },
-
+    com_nombreLieuxDeVote: {
+      type: Sequelize.INTEGER,
+    }
+   
   });
 
-  return Hopital;
+  return Communes;
 };
