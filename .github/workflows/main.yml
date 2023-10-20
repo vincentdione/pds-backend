@@ -41,7 +41,8 @@ jobs:
     needs: push_to_registry 
     steps:
       - name: SSH into the server and deploy
-        uses: appleboy/ssh-action@master
+        #uses: appleboy/ssh-action@master
+        uses: webfactory/ssh-agent@v0.4.1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
