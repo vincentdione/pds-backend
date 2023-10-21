@@ -9,8 +9,6 @@
 #COPY . .
 
 #CMD ["sh","-c","npm start"]
-
-
 FROM node:14.14.0-alpine as DEV 
 ENV  NODE_ENV = dev
 
