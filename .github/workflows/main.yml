@@ -48,7 +48,9 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PASSWORD}}
           script: |
+            cd /home/k24/pds-backend
             pm2 stop api
-            cd /home
-            mkdir testt
+            git pull origin main
+            npm install
+            pm2 start api
                      
