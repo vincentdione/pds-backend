@@ -3,6 +3,16 @@ const Cadres = db.cadres;
 const Role = db.role;
 const Op = db.Sequelize.Op;
 const multer = require('multer');
+const moment = require('moment');
+
+const admin = require('firebase-admin');
+const serviceAccount = require('../config/serviceFirebase.json');  // Replace with the path to your service account key file
+const firebaseConfig = require('../config/firebase-config');  // Replace with the path to your Firebase config file
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: firebaseConfig.storageBucket,
+});
 
 
 const config = require("../config/auth.config");
@@ -34,12 +44,62 @@ const removeOne = async(req, res) => {
 
 const updateOne = async(req, res) => {
     try {
-      const id = req.body.id;
+      const id = req.params.id;
 
-      const cadre = await Cadres.findOne({ where: { [Op.or]: [{id: req.body.id}] } });
-      console.log(cadre)
+     
 
-        await Cadres.update(req.body, {
+      const updateCadre = {
+        url: req.body.identification.url,
+        nom: req.body.identification.nom,
+        prenom: req.body.identification.prenom,
+        sexe: req.body.identification.sexe,
+        telephone: req.body.identification.telephone,
+        residence: req.body.identification.residence,
+        telephoneFixe: req.body.identification.telephoneFixe,
+        whatsapp: req.body.identification.whatsapp,
+        email: req.body.identification.email,
+        image: req.body.identification.image,
+        adhesionPds: req.body.situationMilitante.adhesionPds,
+        carteMembre: req.body.situationMilitante.carteMembre,
+        anneeCarte: req.body.situationMilitante.anneeCarte,
+        numeroCarte: req.body.situationMilitante.numeroCarte,
+        fonctionsParti: req.body.situationMilitante.fonctionsParti,
+        numeroCIN: req.body.situationMilitante.numeroCIN,
+        dateDelivranceCIN: req.body.situationMilitante.dateDelivranceCIN,
+        dateExpirationCIN: req.body.situationMilitante.dateExpirationCIN,
+        numeroCarteElecteur: req.body.situationMilitante.numeroCarteElecteur,
+        centreVote: req.body.situationMilitante.centreVote,
+        federation: req.body.situationMilitante.federation,
+        section: req.body.situationMilitante.section,
+        secteur: req.body.situationMilitante.secteur,
+        mouvementSoutien: req.body.situationMilitante.mouvementSoutien,
+        region: req.body.situationMilitante.region,
+        commune: req.body.situationMilitante.commune,
+        depart: req.body.situationMilitante.depart,
+        village: req.body.situationMilitante.village,
+        numeroCentreVote: req.body.situationMilitante.numeroCentreVote,
+        numeroBureauVote: req.body.situationMilitante.numeroBureauVote,
+        professionActuelle: req.body.situationProf.professionActuelle,
+        intituleFonction1: req.body.situationProf.intituleFonction1,
+        intituleFonction2: req.body.situationProf.intituleFonction2,
+        annee1: req.body.situationProf.annee1,
+        annee2: req.body.situationProf.annee2,
+        niveauEtude: req.body.situationProf.niveauEtude,
+        intituleEcole1: req.body.situationProf.intituleEcole1,
+        intituleEcole2: req.body.situationProf.intituleEcole2,
+        anneeEcole1: req.body.situationProf.anneeEcole1,
+        anneeEcole2: req.body.situationProf.anneeEcole2,
+        specialisation: req.body.situationProf.specialisation,
+        autres: req.body.situationProf.autres,
+        languesParlees: req.body.situationProf.langueParlees,
+        languesEcrites: req.body.situationProf.langueEcrites,
+            };
+
+
+
+      const cadre = await Cadres.findOne({ where: { [Op.or]: [{id: req.params.id}] } });
+
+        await Cadres.update(updateCadre, {
             where: { id: id }
           });
         return res.status(201).json({
@@ -47,6 +107,7 @@ const updateOne = async(req, res) => {
             success: true,
         });
     } catch(err) {
+      console.log(err)
         return res.status(500).json({
             message: "username,email et telephone doivent etre unique",
             success: false,
@@ -137,6 +198,30 @@ const getCadres = async(req, res) => {
         });
     }
 };
+
+
+
+const getByUrl = async (req, res) => {
+  try {
+    const item = await Cadres.findOne({ where: { url: req.params.url } });
+    if (item) {
+      console.log("cadre" + JSON.stringify(item));
+      return res.status(200).json(item);
+    }
+    return res.status(404).json({
+      message: "Item not found",
+      success: false,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: err.message,
+      success: false,
+    });
+  }
+}
+
+
+
 
 
 
@@ -285,22 +370,36 @@ const validateTelephone = async (telephone) => {
 const ajouterCadre = async (req, res) => {
     try {
        
-        console.log(" ========================file==================================")
-        console.log(" file ==== "+req.file)
-        console.log(" file ==== "+JSON.stringify(req.body.identification.image))
-        console.log(" ==========================================================")
+
+      const anneeEnCours = moment().format('YY');
+        const dernierCadre = await Cadres.findOne({
+            order: [['createdAt', 'DESC']],
+        });
+
+        let dernierNumero = 0;
+        if (dernierCadre && dernierCadre.matricule) {
+            // Extraire les 5 derniers chiffres du matricule existant
+            dernierNumero = parseInt(dernierCadre.matricule.slice(-5), 10);
+        }
+
+        const nouveauNumero = dernierNumero + 1;
+        const numeroFormatte = (nouveauNumero.toString().padStart(5, '0')).slice(-5);
+
+        const matricule = `FNCL${anneeEnCours}${numeroFormatte}`;
+        
       // Vérifier si le téléphone ou l'email existe déjà
       const existingCadre = await Cadres.findOne({
         where: {
           [Op.or]: [
             { telephone: req.body.identification.telephone },
-            { email: req.body.identification.email }
+            { email: req.body.identification.email },
+            { url: req.body.identification.url },
           ]
         }
       });
   
       if (existingCadre) {
-        return res.status(409).json({ message: 'Le téléphone ou l\'email existe déjà' });
+        return res.status(409).json({ message: 'Le téléphone ou l\'email  ou url existe déjà' });
       }
         
         // Récupérez le fichier téléchargé à partir de req.file
@@ -309,10 +408,15 @@ const ajouterCadre = async (req, res) => {
           image = req.file;
           console.log(" file ==== "+image)
         }
+
+        
+
         
         // Utilisez le fichier image dans votre logique de traitement
         const nouveauCadre = {
-            nom: req.body.identification.nom,
+      matricule:matricule,
+      url: req.body.identification.url,
+      nom: req.body.identification.nom,
       prenom: req.body.identification.prenom,
       sexe: req.body.identification.sexe,
       telephone: req.body.identification.telephone,
@@ -353,8 +457,8 @@ const ajouterCadre = async (req, res) => {
       anneeEcole2: req.body.situationProf.anneeEcole2,
       specialisation: req.body.situationProf.specialisation,
       autres: req.body.situationProf.autres,
-      languesParlees: req.body.situationProf.languesParlees,
-      languesEcrites: req.body.situationProf.languesEcrites,
+      languesParlees: req.body.situationProf.langueParlees,
+      languesEcrites: req.body.situationProf.langueEcrites,
           };
           console.log(" ==========================================================")
 
@@ -377,11 +481,7 @@ const searchCadres = async (req, res) => {
   try {
     const { professionActuelle, langues, niveauEtude, specialisation, fonctionsParti, region, email, telephone } = req.body;
 
-    console.log("============================")
-    console.log(req.body)
-    console.log(professionActuelle)
-    console.log(langues)
-    console.log("============================")
+    
 
     // Construisez les conditions de recherche en fonction des données du formulaire
     const conditions = {};
@@ -474,6 +574,7 @@ module.exports = {
     addOne,
     updateImg,
     ajouterCadre,
-    searchCadres
+    searchCadres,
+    getByUrl
 }
 

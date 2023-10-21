@@ -96,7 +96,7 @@ const blockOne = async(req, res) => {
   try {
     console.log(" ============================== == unblocked  ============================================================= ")
       await User.update({
-        isActive: 1
+        isActive: 0
       },
       {
         where: { id: req.params.id },
@@ -118,7 +118,7 @@ const unBlockOne = async(req, res) => {
 
     console.log(" ============================== == Blocked  ============================================================= ")
       await User.update({
-        isActive: 0
+        isActive: 1
       },
       {
         where: { id: req.params.id },

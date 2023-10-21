@@ -23,7 +23,7 @@ const register = async (data,res) =>{
         if(userEmail) {
             return res.status(400).json({
                 username: "Email existe deja",
-                message: "Erreur lors de l'Inscription",
+                message: "Email existe déja",
                 success: false,
             });
         }
@@ -46,21 +46,31 @@ const register = async (data,res) =>{
  
         const hashedPassword = await bcrypt.hash(data.password, 16);
         const code = crypto.randomInt(1000, 10000);
+        const role = data.role;
+
         console.log("------------CODE------------")
         console.log(code)
-        console.log("------------CODE------------")
         console.log(data)
+        console.log(role)
+        const userRole = await Role.findOne({ where: { name: role } });
+
+        console.log("------------CODE------------")
         await User.create({
             ...data,
             password: hashedPassword,
             verificationCode:code,
             isActive: true
         })
-        .then(user => {
-            user.setRoles([1]).then(() => {
-                console.log("!!!!!!!!!!!!!!!!!!!!!!!!!"+user)
-                res.send({ message: "User was registered successfully!",user:user });
-              });
+        .then(user => {            
+            console.log(user)
+            if (userRole) {
+                 user.setRoles([userRole.id]).then(() => {
+                    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!"+user)
+                    res.send({ message: "User was registered successfully!",user:user });
+                  });
+            } else {
+                console.log("Role not found!");
+            }
         })
           .catch(err => {
             res.status(500).send({ message: err.message });
@@ -78,17 +88,51 @@ const register = async (data,res) =>{
 
 }
 
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findOne({
+            where: { id: req.params.id },
+            include: Role, // Assuming you have a proper association setup
+          });
+  
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+          success: false,
+        });
+      }
+    
+      await user.setRoles([]); 
+      await user.destroy();
+  
+      return res.status(200).json({
+        message: "User deleted successfully",
+        success: true,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        message: error.message,
+        success: false,
+      });
+    }
+  };
 
 const login = async (data, res) => {
   try {
       let { username,password } = data;
-      console.log("--------------------")
-      console.log(data)
-     /*  const username = data.data.username
-      const password = data.data.password */
-
-      
       const user = await User.findOne({ where: { [Op.or]: [{email: username}, {username: username},{telephone: username}] } });
+
+      const hashedPassword = await bcrypt.hash(password, 16);
+
+          
+      if(!user) {
+        res.status(404).json({
+            message: "Username ou password incorrect",
+            username: "Email ou username incorrect",
+            success: false,
+        })
+      return
+    }
 
       if(!user.isActive){
         res.status(404).json({
@@ -97,17 +141,13 @@ const login = async (data, res) => {
         })
       return
       }
-      
-      if(!user) {
-          res.status(404).json({
-              message: "Username ou password incorrect",
-              username: "Email ou username incorrect",
-              success: false,
-          })
-        return
-      }
+  
       let isMatch = await bcrypt.compare(password, user.password);
-      console.log("----------------------"+isMatch)
+
+      console.log(isMatch)
+      console.log(hashedPassword)
+      console.log(user.password)
+
       if(isMatch) {
         var authorities = [];
         user.getRoles().then(roles => {
@@ -150,6 +190,8 @@ const login = async (data, res) => {
   }
   
 };
+
+
 
 const verify = async (data, res) => {
     console.log(" === "+JSON.stringify(data.verificationCode))
@@ -250,11 +292,12 @@ const resetPassword = async (data, res) => {
   }
 };
 
-const changePassword = async (data,req, res) => {
+const changePassword = async (req, res) => {
   try { 
-      let { oldPassword, newPassword } = data;
-      const user = await User.findByPk(req.user.id);
-      console.log("first"+user)
+      let { oldPassword, newPassword } = req.body;
+
+
+      const user = await User.findOne(req.param.id);
       let isMatch = await bcrypt.compare(oldPassword, user.password);
       if(isMatch) {
           const hashedPassword = await bcrypt.hash(newPassword, 16);
@@ -355,6 +398,56 @@ const validateTelephone = async (telephone) => {
 
   })
 
+  const updateOne = async(req, res) => {
+    try {
+      const id = req.params.id;
+      let hashedPassword = null;
+
+      console.log(req)
+        // Check if req.body is defined
+    if (!req.body) {
+        return res.status(400).json({
+          message: "Request body does not contain data",
+          success: false,
+        });
+      }
+
+ /*      if (req.body.password != 'null' || req.body.password != 'undefined') {
+        hashedPassword = await bcrypt.hash(req.body.password, 16);
+      } */
+
+    
+      const updateUser = {
+        nom: req.body.nom,
+        prenom: req.body.prenom,
+        telephone: req.body.telephone,
+        email: req.body.email,
+      };
+  
+   /*    if (hashedPassword !== null) {
+        updateUser.password = hashedPassword;
+      } */
+      if (req.body.role !== null && req.body.role !== undefined) {
+        updateUser.role = req.body.role;
+      }
+
+
+        await User.update(updateUser, {
+            where: { id: id }
+          });
+        return res.status(201).json({
+            message: "User modifié",
+            success: true,
+        });
+    } catch(err) {
+      console.log(err)
+        return res.status(500).json({
+            message: "username,email et telephone doivent etre unique",
+            success: false,
+        });
+    }
+};
+
  
 
 module.exports ={
@@ -365,5 +458,7 @@ module.exports ={
   resetPassword,
   forgotPassword,
   logout,
-  checkToken
+  checkToken,
+  deleteUser,
+  updateOne
 }

@@ -172,6 +172,11 @@ const Cadre = sequelize.define('Cadre', {
   autres: {
     type: Sequelize.STRING,
     allowNull: false
+  }, 
+  url: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    unique: true,
   },
   languesEcrites: {
     type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères

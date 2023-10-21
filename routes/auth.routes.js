@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {register,login, verify, forgotPassword, resetPassword, changePassword, logout, checkToken} = require("../controler/auth.controler");
+const {register,login, verify, forgotPassword, resetPassword, changePassword, logout, checkToken, deleteUser, updateOne} = require("../controler/auth.controler");
 const { ensureAuthorized,ensureAuthenticated } = require("../middleware/auth-middleware");
 
 //CREATE
@@ -31,6 +31,15 @@ router.post('/verify', async (req, res) => {
     await verify(req.body, res);
 });
 
+router.delete("/remove/:id",async (req, res) => {    
+    await deleteUser(req, res);
+});
+
+router.patch("/update/:id",async (req, res) => {    
+    await updateOne(req, res);
+});
+
+
 router.post('/forgotPassword', async (req, res) => {
     
     await forgotPassword(req.body, res);
@@ -41,8 +50,16 @@ router.post('/resetPassword', async (req, res) => {
     await resetPassword(req.body, res);
 });
 
-router.post('/changePassword',ensureAuthenticated,ensureAuthorized(["user"]), async (req, res) => {
-    await changePassword(req.body, res);
+router.patch("/changeMdp/:id", async (req, res) => {
+    await changePassword(req, res);
+});
+
+router.patch("/isBlocked/:id",async (req, res) => {    
+    await blockOne(req, res);
+});
+
+router.patch("/isNotBlocked/:id",async (req, res) => {    
+    await unBlockOne(req, res);
 });
 
 router.post('/logout', async (req, res) => {

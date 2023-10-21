@@ -5,11 +5,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: gp_database
+      POSTGRES_DB: pds
     ports: 
       - '5432:5432'
     volumes:
-      - ./samagp-db:/var/lib/postgresql/data
+      - ./pds-db:/var/lib/postgresql/data
 
   server:
     build:
@@ -20,11 +20,11 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_HOST: db
-      DB_DATABASE: gp_database
+      DB_DATABASE: pds
     depends_on:
       - db
     ports:
       - '5000:5000'
         
 volumes:
-  sama-db:
+  pds-db:

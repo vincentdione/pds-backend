@@ -8,8 +8,19 @@ const cookieParser = require("cookie-parser")
 const app = express();
 const router = require("./routes/index");
 const  multer = require("multer");
-const dotenv = require('dotenv')
-console.log(process.env)
+require('dotenv').config();
+
+/* 
+dotenv.config({ 
+  path: process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev'
+ });
+ */
+ console.log("**********************************************************")
+ console.log(process.env.DB_USER)
+ console.log(process.env.DB_DATABASE)
+ console.log(process.env.DB_HOST)
+ console.log(process.env.DB_PASSWORD)
+ console.log("**********************************************************")
 
 
 app.use((req, res, next) => {
@@ -92,18 +103,15 @@ app.listen(5000, err => {
 function initial() {
   Role.create({
     id: 1,
-    name: "docteur"
+    name: "SUPER_ADMIN"
   });
  
   Role.create({
     id: 2,
-    name: "secretaire"
+    name: "ADMIN"
   });
- 
-  Role.create({
-    id: 3,
-    name: "admin"
-  });
+
+
 
   User.create({
     id: 1,
@@ -142,7 +150,7 @@ function initial() {
  
   UserRoles.create({
     userId: 1,
-    roleId: 3
+    roleId: 2
   })
 
   UserRoles.create({

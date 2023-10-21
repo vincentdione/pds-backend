@@ -1,15 +1,13 @@
 const router = require("express").Router();
-const { updateOne, getOne, removeOne, getCadres,addOne, updateImg, ajouterCadre, searchCadres } = require("../controler/cadres.controller");
+const { updateOne, getOne, removeOne, getCadres,addOne, updateImg, ajouterCadre, searchCadres, getByUrl } = require("../controler/cadres.controller");
 const multer = require('multer'); // Middleware pour gérer les fichiers
 const path = require('path');
 // Configuration de multer pour l'upload de fichiers
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "../images");
-    },
+    destination: "../images",
     filename: function (req, file, cb) {
-      cb(null, Date.now() + path.extname(file.originalname));
+      cb(null, Date.now() + file.mimetype.split('/')[1]);
     },
   });
   
@@ -17,7 +15,7 @@ const storage = multer.diskStorage({
 
 
 
-router.post("/add",upload.single('file'),async (req, res) => {    
+router.post("/add",upload.single('image'),async (req, res) => {    
     await ajouterCadre(req, res);
 });
 
@@ -31,16 +29,20 @@ router.get("/get",async (req, res) => {
     await getCadres(req, res);
 });
 
-router.patch("/update",async (req, res) => {    
+router.patch("/update/:id",async (req, res) => {    
     await updateOne(req, res);
 });
 
-router.put("/upload/:id",async (req, res) => {    
+router.put("/upload/:id",upload.single('file'),async (req, res) => {    
     await updateImg(req, res);
 });
 
 router.get("/find/:id",async (req, res) => {  
     await getOne(req, res);
+});
+
+router.get("/url/:url",async (req, res) => {  
+    await getByUrl(req, res);
 });
 
 router.delete("/remove/:id",async (req, res) => {    
