@@ -91,9 +91,9 @@ var swaggerUi = require('swagger-ui-express'),
 app.use(router);
 app.get("/", (req, res) => res.send("Hello World! from home api"));
 
-db.sequelize.sync({force: true}).then(() => {
+db.sequelize.sync({alter: true}).then(() => {
   console.log('Drop and Resync Db');
-  initial();
+  //initial();
 }); 
 
 app.listen(5000, err => {
