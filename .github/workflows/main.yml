@@ -50,7 +50,8 @@ jobs:
           script: |
             cd /home/k24/fncl-backend
             pm2 stop api
+            pm2 delete api
             git pull origin main
             npm install
-            pm2 start api
+            pm2 start --name api index.js
                      
