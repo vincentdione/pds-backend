@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PASSWORD}}
           script: |
-            cd /home/k24/pds-backend
+            cd /home/k24/fncl-backend
             pm2 stop api
             git pull origin main
             npm install
