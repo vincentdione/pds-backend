@@ -33,7 +33,7 @@ const origin = process.env.NODE_ENV === "development"
   : "http://194.195.92.115"
 
 app.use(express.json());
-const allowedDomains = ["http://localhost:3000","http://localhost:3050","http://localhost:4200","http://localhost:4201","http://194.195.92.115"]
+const allowedDomains = ["http://localhost:3000","http://localhost:4200","http://app.fncl-pds.org"]
 app.use(
   cors({
     origin:allowedDomains,
