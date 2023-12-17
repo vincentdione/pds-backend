@@ -1,14 +1,16 @@
 const router = require("express").Router();
-const { updateOne, getOne, removeOne, getCadres,addOne, updateImg, ajouterCadre, searchCadres, getByUrl } = require("../controler/cadres.controller");
-const multer = require('multer'); // Middleware pour gérer les fichiers
+const { updateOne, getOne, removeOne, getCadres,addOne, updateImg, ajouterCadre, searchCadres, getByUrl,importData } = require("../controler/cadres.controller");
+const multer = require('multer'); 
 const path = require('path');
-// Configuration de multer pour l'upload de fichiers
 
 const storage = multer.diskStorage({
-    destination: "../images",
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + file.mimetype.split('/')[1]);
-    },
+    destination: function (req, file, cb) {
+        const destinationPath = path.resolve(__dirname, '../../images');
+        cb(null, destinationPath);
+      },
+      filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname);
+      },
   });
   
   const upload = multer({ storage: storage });
@@ -18,6 +20,12 @@ const storage = multer.diskStorage({
 router.post("/add",upload.single('image'),async (req, res) => {    
     await ajouterCadre(req, res);
 });
+
+router.post("/import",async (req, res) => {    
+    await importData(req, res);
+});
+
+
 
 router.post("/search",async (req, res) => {    
     await searchCadres(req, res);
@@ -33,9 +41,6 @@ router.patch("/update/:id",async (req, res) => {
     await updateOne(req, res);
 });
 
-router.put("/upload/:id",upload.single('file'),async (req, res) => {    
-    await updateImg(req, res);
-});
 
 router.get("/find/:id",async (req, res) => {  
     await getOne(req, res);
@@ -57,6 +62,12 @@ router.patch("/isBlocked/:id",async (req, res) => {
 router.patch("/isNotBlocked/:id",async (req, res) => {    
     await unBlockOne(req, res);
 });
+
+
+router.post("/upload/:id", upload.single('file'), async (req, res) => {
+    await updateImg(req, res);
+  });
+
 
 
 module.exports = router;

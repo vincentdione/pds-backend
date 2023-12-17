@@ -1,14 +1,14 @@
 const router = require("express").Router();
-const { getRegions, updateOne, addOne, removeOne } = require("../controler/regions.controller");
+const { getlangues, updateOne,addOne, removeOne } = require("../controler/langues.controller");
 
 
 
 router.get("/get",async (req, res) => {  
     	  
-    await getRegions(req, res);
+    await getlangues(req, res);
 });
 
-router.patch("/update",async (req, res) => {    
+router.patch("/update/:id",async (req, res) => {    
     await updateOne(req, res);
 });
 
@@ -16,11 +16,8 @@ router.post("/add",async (req, res) => {
     await addOne(req, res);
 });
 
-router.delete("/delete/:id",async (req, res) => {  
-    console.log("first delete ")  
+router.delete("/delete/:id",async (req, res) => {    
     await removeOne(req, res);
 });
-
-
 
 module.exports = router;

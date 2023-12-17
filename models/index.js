@@ -49,6 +49,7 @@ db.departements = require("../models/departements.model.js")(sequelize,Sequelize
 db.communes = require("../models/communes.model.js")(sequelize,Sequelize);
 db.lieuvote = require("../models/lieuvote.model.js")(sequelize,Sequelize);
 db.bureauvote = require("../models/bureauvote.model.js")(sequelize,Sequelize);
+db.langues = require("../models/langues.model.js")(sequelize,Sequelize);
 
 
 

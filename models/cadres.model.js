@@ -47,135 +47,120 @@ const Cadre = sequelize.define('Cadre', {
   },
   adhesionPds: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   carteMembre: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.BOOLEAN,
+    allowNull: true
   },
   anneeCarte: {
     type: Sequelize.STRING,
+    allowNull: true
+  },
+  fonctionsParti: {
+    type: Sequelize.BOOLEAN,
     allowNull: true
   },
   numeroCarte: {
     type: Sequelize.STRING,
     allowNull: true
   },
-  fonctionsParti: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
+  
   numeroCIN: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   dateDelivranceCIN: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   dateExpirationCIN: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   numeroCarteElecteur: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   centreVote: {
     type: Sequelize.STRING,
-    allowNull: false
-  },
-  federation: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  section: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  secteur: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  mouvementSoutien: {
-    type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   region: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   commune: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   depart: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   village: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   numeroCentreVote: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   numeroBureauVote: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
   professionActuelle: {
-    type: Sequelize.STRING,
-    allowNull: false
+    type: Sequelize.BOOLEAN,
+    allowNull: true
   },
-  intituleFonction1: {
+  fonctionActuelle: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
-  intituleFonction2: {
-    type: Sequelize.STRING,
-    allowNull: false
+  fonctionAnterieure: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true
   },
-  annee1: {
-    type: Sequelize.STRING,
-    allowNull: false
+  intituleFonction: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true
   },
-  annee2: {
-    type: Sequelize.STRING,
-    allowNull: false
+  annee: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true
   },
   niveauEtude: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   },
-  intituleEcole1: {
-    type: Sequelize.STRING,
-    allowNull: false
+  diplome: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true
   },
-  intituleEcole2: {
-    type: Sequelize.STRING,
-    allowNull: false
+  intituleEcole: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true
   },
-  anneeEcole1: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  anneeEcole2: {
-    type: Sequelize.STRING,
-    allowNull: false
+  anneeEcole: {
+    type: Sequelize.ARRAY(Sequelize.STRING), // Tableau de chaînes de caractères
+    allowNull: true,
   },
   specialisation: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
+  },
+  circonscription: {
+    type: Sequelize.STRING,
+    allowNull: true
   },
   autres: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: true
   }, 
   url: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
   },
   languesEcrites: {

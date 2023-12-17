@@ -1,7 +1,6 @@
 
 const db = require("../models");
-const Departements = db.departements;
-const Role = db.role;
+const Pays = db.pays;
 const Op = db.Sequelize.Op;
 
 const config = require("../config/auth.config");
@@ -11,15 +10,15 @@ const config = require("../config/auth.config");
 
 const removeOne = async(req, res) => {
     try {
-        const deleted = await Departements.destroy({ where: { id: req.params.id } });
+        const deleted = await Pays.destroy({ where: { id: req.params.id } });
         if(!deleted) {
             return res.status(404).json({
-                message: "Region non trouvé",
+                message: "Pays non trouvé",
                 success: false,
             });
         }
         return res.status(204).json({
-            message: "Region supprimé avec success",
+            message: "Pays supprimé avec success",
             success: true,
         });
     } catch(err) {
@@ -36,15 +35,62 @@ const updateOne = async(req, res) => {
     try {
       const id = req.body.id;
 
-      const cadre = await Departements.findOne({ where: { [Op.or]: [{id: req.body.id}] } });
-      console.log("--------------|||||||||||||||||||||||||||||||||||||||||||||||||||||||------------------");
-      console.log(cadre)
-
-        await Departements.update(req.body, {
+      const Pays = await Pays.findOne({ where: { [Op.or]: [{id: req.body.id}] } });
+        if(!Pays){
+            return res.status(404).json({
+                message: "Ce Pays n'existe pas!",
+                success: false,
+            })
+        }
+        await Pays.update(req.body, {
             where: { id: id }
           });
         return res.status(201).json({
-            message: "Region modifiée",
+            message: "Pays modifié",
+            success: true,
+        });
+    } catch(err) {
+        return res.status(500).json({
+            message: "revoyer vos informations",
+            success: false,
+        });
+    }
+};
+
+
+
+
+
+const getPays = async(req, res) => {
+    try {
+        const item = await Pays.findAll();
+        if(item) {
+            return res.status(200).json(item);
+        }
+        return res.status(404).json({
+            message: "Item not found",
+            success: false,
+        });
+    } catch(err) {
+        return res.status(500).json({
+            message: err.message,
+            success: false,
+        });
+    }
+};
+
+const addOne = async(req, res) => {
+    try {
+
+        if(req.body.code == null){
+            return res.status(404).json({
+                message: "Le champ code de Pays est obligatoire",
+                success: false,
+            })
+        }
+        await Pays.create(req.body);
+        return res.status(201).json({
+            message: "Pays ajouté",
             success: true,
         });
     } catch(err) {
@@ -59,41 +105,12 @@ const updateOne = async(req, res) => {
 
 
 
-const getDepartements = async(req, res) => {
-    try {
-        const item = await Departements.findAll(
-            {
-                include: [
-                  { model: db.regions },
-                ]
-              }
-        );
-        if(item) {
-            return res.status(200).json(item);
-        }
-        return res.status(404).json({
-            message: "Item not found",
-            success: false,
-        });
-    } catch(err) {
-        return res.status(500).json({
-            message: err.message,
-            success: false,
-        });
-    }
-};
-
-
-
-
-
-
 const getOne = async(req, res) => {
     try {
       console.log("=----------------=-----------")
-        const item = await Departements.findByPk(req.params.id);
+        const item = await Pays.findByPk(req.params.id);
         if(item) {
-            console.log("Departements"+JSON.stringify(item));
+            console.log("Pays"+JSON.stringify(item));
             return res.status(200).json(item);
         }
         return res.status(404).json({
@@ -107,20 +124,6 @@ const getOne = async(req, res) => {
         });
     }
 };
-
-
-
-
-  
-
-  
-  
-
-  
-
-
-
- 
 
 
   
@@ -129,6 +132,7 @@ module.exports = {
     removeOne,
     updateOne,
     getOne,
-    getDepartements,
+    getPays,
+    addOne
 }
 

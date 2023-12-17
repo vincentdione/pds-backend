@@ -12,14 +12,18 @@ const config = require("../config/auth.config");
 const removeOne = async(req, res) => {
     try {
         const deleted = await Regions.destroy({ where: { id: req.params.id } });
+
+        console.log(req.body.id)
+        console.log(deleted)
+
         if(!deleted) {
             return res.status(404).json({
-                message: "Region non trouvé",
+                message: "Region non trouvée",
                 success: false,
             });
         }
         return res.status(204).json({
-            message: "Region supprimé avec success",
+            message: "Region supprimée avec success",
             success: true,
         });
     } catch(err) {
@@ -36,15 +40,14 @@ const updateOne = async(req, res) => {
     try {
       const id = req.body.id;
 
-      const cadre = await Regions.findOne({ where: { [Op.or]: [{id: req.body.id}] } });
-      console.log("--------------|||||||||||||||||||||||||||||||||||||||||||||||||||||||------------------");
-      console.log(cadre)
+      const region = await Regions.findOne({ where: { [Op.or]: [{id: req.body.id}] } });
+      console.log(region)
 
         await Regions.update(req.body, {
             where: { id: id }
           });
         return res.status(201).json({
-            message: "Region modifié",
+            message: "Region modifiée",
             success: true,
         });
     } catch(err) {
@@ -108,9 +111,40 @@ const getOne = async(req, res) => {
   
 
   
-  
+const addOne = async (req, res) => {
+    try {
+        const existingRegion = await Regions.findOne({ reg_name: req.body.reg_name  });
 
-  
+        console.log("============================================================")
+        console.log(existingRegion)
+        console.log(req.body)
+        console.log("============================================================")
+
+        if (existingRegion) {
+            return res.status(400).json({
+                message: "La région existe déjà",
+                success: false,
+            });
+        }
+
+        const newRegion = await Regions.create({ ...req.body });
+
+        return res.status(201).json({
+            message: "Région ajoutée avec succès",
+            success: true,
+            region: newRegion,
+        });
+    } catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            message: "Erreur lors de l'ajout de la région",
+            success: false,
+            error: err.message,
+        });
+    }
+};
+
 
 
 
@@ -124,5 +158,6 @@ module.exports = {
     updateOne,
     getOne,
     getRegions,
+    addOne
 }
 

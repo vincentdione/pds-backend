@@ -9,6 +9,7 @@ const app = express();
 const router = require("./routes/index");
 const  multer = require("multer");
 require('dotenv').config();
+const path = require('path');
 
 /* 
 dotenv.config({ 
@@ -54,15 +55,30 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post("/api/upload", upload.single("file"), (req, res) => {
+app.post("/api/upload/:id", upload.single("file"), (req, res) => {
   const file = req.file;
-  console.log(file.filename)
   if(!file){
     const error = new Error("No File")
     error.status = 400
     return next(error);
   }
-  res.status(200).json(file.filename);
+
+  const imagePath = "images/" + file.filename;
+
+  Cadre.update({ image: imagePath }, { where: { id: req.params.id } })
+    .then((result) => {
+      if (result[0] === 1) {
+        res.status(200).json({ success: true, imagePath });
+      } else {
+        res.status(404).json({ success: false, error: "Cadre not found" });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ success: false, error: "Internal Server Error" });
+    });
+
+  //res.status(200).json(file.filename);
 });
 
 
@@ -90,6 +106,9 @@ var swaggerUi = require('swagger-ui-express'),
 //app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(router);
 app.get("/", (req, res) => res.send("Hello World! from home api"));
+
+app.use('/api/images', express.static(path.join(__dirname, '../images')));
+
 
 db.sequelize.sync({alter: true}).then(() => {
   console.log('Drop and Resync Db');
