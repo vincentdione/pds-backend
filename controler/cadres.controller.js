@@ -523,21 +523,26 @@ const ajouterCadre = async (req, res) => {
 
 const searchCadres = async (req, res) => {
   try {
-    const { professionActuelle, langues, niveauEtude, specialisation, fonctionsParti, region, email, telephone } = req.body;
+    const { professionActuelle, langues, niveauEtude, specialisation, fonctionActuelle, region, email, telephone } = req.body;
 
     
 
     // Construisez les conditions de recherche en fonction des données du formulaire
     const conditions = {};
-    if (professionActuelle) {
-      conditions.professionActuelle = {
-        [Op.iLike]: `%${professionActuelle}%`,
-      };
-    }
+      if (professionActuelle == '1'){
+        conditions.professionActuelle =  true; // Convert to boolean
+      }
+      else {
+        conditions.professionActuelle =  false; // Convert to boolean
+
+      }
+    
 
 
 
     if (langues) {
+      console.log("langues: " + langues)
+      console.log(langues)
       conditions[Op.or] = [
         { languesParlees: { [Op.contains]: [langues] } },
         { languesEcrites: { [Op.contains]: [langues] } }
@@ -556,9 +561,9 @@ const searchCadres = async (req, res) => {
       };
     }
 
-    if (fonctionsParti) {
-      conditions.fonctionsParti = {
-        [Op.iLike]: `%${fonctionsParti}%`,
+    if (fonctionActuelle) {
+      conditions.fonctionActuelle = {
+        [Op.iLike]: `%${fonctionActuelle}%`,
       };
     }
 
@@ -582,10 +587,8 @@ const searchCadres = async (req, res) => {
 
 
     const cadres = await Cadres.findAll({ where: conditions });
-    console.log("============================")
 
     console.log(cadres)
-    console.log("============================")
 
 
     if (!cadres || cadres.length === 0) {

@@ -380,13 +380,6 @@ function initial() {
 
 
   Departements.create({
-    id:13,
-    dept_name:'MALEM HODAR',
-    dept_description:'MALEM HODAR',
-    regionId:4
-  }) 
-
-  Departements.create({
     id:14,
     dept_name:'GUINGUINEO',
     dept_description:'GUINGUINEO',
@@ -465,12 +458,6 @@ function initial() {
     regionId:8
   }) 
 
-  Departements.create({
-    id:25,
-    dept_name:'LOUGA',
-    dept_description:'LOUGA',
-    regionId:8
-  }) 
 
   Departements.create({
     id:25,
@@ -1182,15 +1169,6 @@ function initial() {
     id:63,
     com_name:'REFANE',
     com_description:'REFANE',
-    departementId:5,
-    com_nombreElecteurs:0,
-    com_nombreLieuxDeVote:0
-  }) 
-
-  Communes.create({
-    id:64,
-    com_name:'THIAKHAR',
-    com_description:'THIAKHAR',
     departementId:5,
     com_nombreElecteurs:0,
     com_nombreLieuxDeVote:0
