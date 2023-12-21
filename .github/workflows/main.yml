@@ -60,8 +60,8 @@ jobs:
             git pull origin main
             npm install
             # You can use the database information as needed
-            echo "DB_HOST: ${{ vars.DB_HOST }}"
-            echo "DB_USER: ${{ vars.DB_USER }}"
-            echo "DB_PASSWORD: ${{ vars.DB_PASSWORD }}"
+            # echo "DB_HOST: ${{ vars.DB_HOST }}"
+            # echo "DB_USER: ${{ vars.DB_USER }}"
+            # echo "DB_PASSWORD: ${{ vars.DB_PASSWORD }}"
             pm2 start --name api index.js
                      
