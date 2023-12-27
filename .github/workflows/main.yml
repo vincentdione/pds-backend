@@ -57,7 +57,7 @@ jobs:
             nvm use 14
             pm2 stop api
             pm2 delete api
-            git pull origin main
+            git pull
             npm install
             # You can use the database information as needed
             # echo "DB_HOST: ${{ vars.DB_HOST }}"
