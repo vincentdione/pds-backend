@@ -21,7 +21,7 @@ const config = require("../config/auth.config");
 
 
 
-const removeOne = async(req, res) => {
+/* const removeOne = async(req, res) => {
     try {
         const deleted = await Cadres.destroy({ where: { id: req.params.id } });
         if(!deleted) {
@@ -42,6 +42,47 @@ const removeOne = async(req, res) => {
     }
 };
 
+ */
+
+const removeOne = async (req, res) => {
+  try {
+      const cadre = await Cadres.findByPk(req.params.id);
+      if (!cadre) {
+          return res.status(404).json({
+              message: "Cadre non trouvé",
+              success: false,
+          });
+      }
+
+      const deleted = await Cadres.destroy({ where: { id: req.params.id } });
+      if (!deleted) {
+          return res.status(404).json({
+              message: "Cadre non trouvé",
+              success: false,
+          });
+      }
+
+      // Supprimer l'image de profil associée
+      if (cadre.image) {
+          const imagePath = path.join(__dirname, '../../images', cadre.image);
+
+          // Vérifiez si le fichier existe avant de le supprimer
+          if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+          }
+      }
+
+      return res.status(204).json({
+          message: "Cadre supprimé avec succès",
+          success: true,
+      });
+  } catch (err) {
+      return res.status(500).json({
+          message: err.message,
+          success: false,
+      });
+  }
+};
 
 
 const updateOne = async(req, res) => {
@@ -131,7 +172,7 @@ const updateImg = async (req, res) => {
 
     // Supprimez l'ancienne image du répertoire
     if (existingCadre && existingCadre.image) {
-      const oldImagePath = path.join(__dirname, '../../front/src/assets/profil/', existingCadre.image);
+      const oldImagePath = path.join(__dirname, '../../images', existingCadre.image);
     
       // Supprimez l'ancienne image du répertoire
       if (fs.existsSync(oldImagePath)) {
@@ -256,12 +297,6 @@ const getByUrl = async (req, res) => {
     });
   }
 }
-
-
-
-
-
-
 
 
 
@@ -537,7 +572,7 @@ const searchCadres = async (req, res) => {
 
       }
     
-
+console.log("first condition  "+professionActuelle)
 
 
     if (langues) {
