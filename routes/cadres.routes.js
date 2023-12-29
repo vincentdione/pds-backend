@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { updateOne, getOne, removeOne, getCadres,addOne, updateImg, ajouterCadre, searchCadres, getByUrl,importData } = require("../controler/cadres.controller");
 const multer = require('multer'); 
 const path = require('path');
+const { verifyToken } = require("../middleware/authJwt");
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -27,12 +28,12 @@ router.post("/import",async (req, res) => {
 
 
 
-router.post("/search",async (req, res) => {    
+router.post("/search",verifyToken,async (req, res) => {    
     await searchCadres(req, res);
 });
 
 
-router.get("/get",async (req, res) => {  
+router.get("/get",verifyToken,async (req, res) => {  
     	  
     await getCadres(req, res);
 });

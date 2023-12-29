@@ -158,7 +158,7 @@ const login = async (data, res) => {
             user_id: user.id,
             role: authorities,
         }, 
-        config.secret,{expiresIn: '8h'} );
+        config.secret,{expiresIn: '30m'} );
 
         let result = {
             token: token,
