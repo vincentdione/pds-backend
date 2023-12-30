@@ -7,16 +7,6 @@ const moment = require('moment');
 const path = require('path');
 const fs = require('fs');
 
-const admin = require('firebase-admin');
-const serviceAccount = require('../config/serviceFirebase.json');  // Replace with the path to your service account key file
-const firebaseConfig = require('../config/firebase-config');  // Replace with the path to your Firebase config file
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: firebaseConfig.storageBucket,
-});
-
-
 const config = require("../config/auth.config");
 
 
