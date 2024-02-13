@@ -431,7 +431,18 @@ const validateTelephone = async (telephone) => {
 
 const ajouterCadre = async (req, res) => {
     try {
-       
+
+      console.log("***************************************************************************")
+      const data = JSON.parse(req.body.data);
+
+      // Access the uploaded file using req.file
+      const file = req.file;     
+      console.log(data)
+      console.log(file)
+       console.log("***************************************************************************")
+       if (!file) {
+        return res.status(400).json({ message: '*********** Aucun fichier téléchargé *********************' });
+      }
 
       const anneeEnCours = moment().format('YY');
         const dernierCadre = await Cadres.findOne({
@@ -448,14 +459,16 @@ const ajouterCadre = async (req, res) => {
         const numeroFormatte = (nouveauNumero.toString().padStart(5, '0')).slice(-5);
 
         const matricule = `FNCL${anneeEnCours}${numeroFormatte}`;
+
+    
         
       // Vérifier si le téléphone ou l'email existe déjà
       const existingCadre = await Cadres.findOne({
         where: {
           [Op.or]: [
-            { telephone: req.body.identification.telephone },
-            { email: req.body.identification.email },
-            { url: req.body.identification.url },
+            { telephone: data.identification.telephone },
+            { email: data.identification.email },
+            { url: data.identification.url },
           ]
         }
       });
@@ -465,59 +478,82 @@ const ajouterCadre = async (req, res) => {
       }
         
         // Récupérez le fichier téléchargé à partir de req.file
-        let image = null;
-        if (req.file) {
-          image = req.file;
-          console.log(" file ==== "+image)
-        }
-        console.log("=============================================================");
-        console.log(req.body.situationProf)
-        console.log("=============================================================");
+  
+    
+    
+        // Récupérez le cadre existant pour obtenir le nom de fichier de l'ancienne image
+       
 
+        // Enregistrez le fichier image directement dans le répertoire
+    const imagePath = path.join(__dirname, '../../images', file.filename);
+    console.log("############################################################")
+    console.log(imagePath)
+    console.log(file.filename)
+    console.log("############################################################")
+   
+  /*   
+    try {
+       await fs.writeFile(imagePath, file.buffer, 'binary');
+      console.log("Image written successfully:", imagePath);
+    } catch (error) {
+      console.error("Error writing image:", error);
+      return res.status(500).json({ message: 'Une erreur s\'est produite lors de l\'ajout du cadre' });
+    }
+     */
+
+        
+          // Supprimez l'ancienne image du répertoire
+          // if (fs.existsSync(oldImagePath)) {
+          //   console.log("Deleting old image...");
+          //   fs.unlinkSync(oldImagePath);
+          //   console.log("Old image deleted successfully.");
+          // } else {
+          //   console.log("Old image not found. Skipping deletion.");
+          // }
         
         // Utilisez le fichier image dans votre logique de traitement
         const nouveauCadre = {
       matricule:matricule,
-      url: req.body.identification.url,
-      nom: req.body.identification.nom,
-      prenom: req.body.identification.prenom,
-      sexe: req.body.identification.sexe,
-      telephone: req.body.identification.telephone,
-      residence: req.body.identification.residence,
-      telephoneFixe: req.body.identification.telephoneFixe,
-      whatsapp: req.body.identification.whatsapp,
-      email: req.body.identification.email,
-      image: req.body.identification.image,
+      url: data.identification.url,
+      nom: data.identification.nom,
+      prenom: data.identification.prenom,
+      sexe: data.identification.sexe,
+      telephone: data.identification.telephone,
+      residence: data.identification.residence,
+      telephoneFixe: data.identification.telephoneFixe,
+      whatsapp: data.identification.whatsapp,
+      email: data.identification.email,
+      image: file.filename,
 
 
-      adhesionPds: req.body.situationMilitante.adhesionPds,
-      carteMembre: req.body.situationMilitante.carteMembre  === 'true' ? 1 : 0,
-      anneeCarte: req.body.situationMilitante.anneeCarte,
-      numeroCarte: req.body.situationMilitante.numeroCarte,
-      fonctionsParti: req.body.situationMilitante.fonctionsParti === 'true' ? 1 : 0,
-      numeroCIN: req.body.situationMilitante.numeroCIN,
-      circonscription:  req.body.situationMilitante.circonscription,
-      dateDelivranceCIN: req.body.situationMilitante.dateDelivranceCIN,
-      dateExpirationCIN: req.body.situationMilitante.dateExpirationCIN,
-      numeroCarteElecteur: req.body.situationMilitante.numeroCarteElecteur,
-      centreVote: req.body.situationMilitante.centreVote,
-      region: req.body.situationMilitante.region,
-      commune: req.body.situationMilitante.commune,
-      depart: req.body.situationMilitante.depart,
-      village: req.body.situationMilitante.village,
-      numeroCentreVote: req.body.situationMilitante.numeroCentreVote,
-      numeroBureauVote: req.body.situationMilitante.numeroBureauVote,
+      adhesionPds: data.situationMilitante.adhesionPds,
+      carteMembre: data.situationMilitante.carteMembre  === 'true' ? 1 : 0,
+      anneeCarte: data.situationMilitante.anneeCarte,
+      numeroCarte: data.situationMilitante.numeroCarte,
+      fonctionsParti: data.situationMilitante.fonctionsParti === 'true' ? 1 : 0,
+      numeroCIN: data.situationMilitante.numeroCIN,
+      circonscription:  data.situationMilitante.circonscription,
+      dateDelivranceCIN: data.situationMilitante.dateDelivranceCIN,
+      dateExpirationCIN: data.situationMilitante.dateExpirationCIN,
+      numeroCarteElecteur: data.situationMilitante.numeroCarteElecteur,
+      centreVote: data.situationMilitante.centreVote,
+      region: data.situationMilitante.region,
+      commune: data.situationMilitante.commune,
+      depart: data.situationMilitante.depart,
+      village: data.situationMilitante.village,
+      numeroCentreVote: data.situationMilitante.numeroCentreVote,
+      numeroBureauVote: data.situationMilitante.numeroBureauVote,
 
 
-      professionActuelle: req.body.situationProf.professionActuelle === 'true' ? 1 : 0,
-      fonctionActuelle: req.body.situationProf.professionActuelle === 'true' && req.body.situationProf.fonctionActuelle != null ? req.body.situationProf.fonctionActuelle : '',
-      fonctionAnterieure: req.body.situationProf.fonctionAnterieures,
-      diplome: req.body.situationProf.diplomes,
-      niveauEtude: req.body.situationProf.niveauEtude,
-      specialisation: req.body.situationProf.specialisation,
-      autres: req.body.situationProf.autres,
-      languesParlees: req.body.situationProf.langueParlees,
-      languesEcrites: req.body.situationProf.langueEcrites,
+      professionActuelle: data.situationProf.professionActuelle === 'true' ? 1 : 0,
+      fonctionActuelle: data.situationProf.professionActuelle === 'true' && data.situationProf.fonctionActuelle != null ? data.situationProf.fonctionActuelle : '',
+      fonctionAnterieure: data.situationProf.fonctionAnterieures,
+      diplome: data.situationProf.diplomes,
+      niveauEtude: data.situationProf.niveauEtude,
+      specialisation: data.situationProf.specialisation,
+      autres: data.situationProf.autres,
+      languesParlees: data.situationProf.langueParlees,
+      languesEcrites: data.situationProf.langueEcrites,
 
        /* intituleFonction1: req.body.situationProf.intituleFonction1,
       intituleFonction2: req.body.situationProf.intituleFonction2, */

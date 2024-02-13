@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 
 
 
-router.post("/add",upload.single('image'),async (req, res) => {    
+router.post("/add",upload.single('file'),async (req, res) => {    
     await ajouterCadre(req, res);
 });
 

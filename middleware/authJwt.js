@@ -3,24 +3,19 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
 
-verifyToken = (req, res, next) => {
-  const authHeaders = req.headers['authorization']
-  //let token = req.cookies.access_token;
- // const token = authHeaders && authHeaders.split(' ')[1] 
+const verifyToken = (req, res, next) => {
+  const authHeaders = req.headers['authorization'];
   const token = authHeaders && authHeaders.split(' ')[1].replace(/^"(.*)"$/, '$1');
 
-  console.log("----------------------------------------------------------------")
-  console.log(JSON.stringify(req.headers));
-  console.log("----------------------------------------------------------------")
+  console.log("----------------------------------------------------------------");
+  console.log("Request Headers: ", JSON.stringify(req.headers));
+  console.log("Token from Authorization Header: ", token);
 
   const access_token = req.body.token || req.query.token || req.headers.authorization;
-
-
-  var valueToken = token
-  console.log("first+token"+valueToken);
-
+  console.log("Token from other sources (body, query, headers): ", access_token);
 
   if (!token) {
+    console.log("No token provided!");
     return res.status(403).send({
       message: "No token provided!"
     });
@@ -28,16 +23,20 @@ verifyToken = (req, res, next) => {
 
   jwt.verify(token, config.secret, (err, user) => {
     if (err) {
-      console.log("first Unauthorized")
-      console.log(err)
+      console.log("Unauthorized: Session expired!");
+      console.error(err);
       return res.status(401).send({
         message: "Votre session a expiré!"
       });
     }
     req.user = user;
+    console.log("Token successfully verified.");
     next();
   });
 };
+
+module.exports = verifyToken;
+
 
 
 verifyUser = (req,res,next)=>{
