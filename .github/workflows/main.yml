@@ -59,7 +59,7 @@ jobs:
             pm2 delete api
             git pull
             npm install
-            # You can use the database information as needed
+            # You can use the database information as needed cool
             # echo "DB_HOST: ${{ vars.DB_HOST }}"
             # echo "DB_USER: ${{ vars.DB_USER }}"
             # echo "DB_PASSWORD: ${{ vars.DB_PASSWORD }}"
