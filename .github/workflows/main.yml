@@ -52,7 +52,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PASSWORD}}
           script: |
-            cd /home/k24/fncl-backend
+            cd /home/k24/pds-backend
             source ~/.nvm/nvm.sh
             nvm use 14
             pm2 stop api
