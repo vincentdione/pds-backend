@@ -3,6 +3,6 @@ module.exports = {
   pgUser:process.env.DB_USER || "postgres",
   pgHost: process.env.DB_HOST || "localhost",
   pgDatabase: process.env.DB_DATABASE ||  "pds",
-  pgPassword: process.env.DB_PASSWORD ||  "postgres",
+  pgPassword: process.env.DB_PASSWORD ||  "Ouvrir1992",
   pgPort: 5432
 };
